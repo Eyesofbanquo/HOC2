@@ -17,6 +17,21 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var _streamTitle:UILabel!
     @IBOutlet weak var _streamDate:UILabel!
     @IBOutlet weak var _streamImage:UIImageView!
+    @IBOutlet weak var _pastBroadcastView:UIView!
+    @IBOutlet weak var _informationView:UIView!
+    
+    
+    @IBAction func indexChanged(sender: UISegmentedControl){
+        switch sender.selectedSegmentIndex {
+        case 0:
+            _pastBroadcastView.hidden = true
+            _informationView.hidden = false
+        case 1:
+            _pastBroadcastView.hidden = false
+            _informationView.hidden = true
+        default: break
+        }
+    }
     /* ^^^ Outlets ^^^ */
     
 
@@ -124,6 +139,7 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     func loadPastBroadcasts(){
         
     }
+    
 
     /*
     // MARK: - Navigation

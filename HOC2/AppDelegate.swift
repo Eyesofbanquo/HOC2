@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //return true
         FBSDKApplicationDelegate.sharedInstance()!.application(application, didFinishLaunchingWithOptions: launchOptions)
         
-        //UITabBar.appearance().backgroundColor = UIColor.clearColor()
+       UITabBar.appearance().tintColor = UIColor.purpleColor()
         
         return true
         

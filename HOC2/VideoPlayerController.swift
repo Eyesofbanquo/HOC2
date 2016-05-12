@@ -33,13 +33,15 @@ class VideoPlayerController: UIViewController, YTPlayerViewDelegate {
     
     func playerViewDidBecomeReady(playerView: YTPlayerView) {
         NSNotificationCenter.defaultCenter().postNotificationName("Playback started", object: self)
-        self.playerView.playVideo()
+        //self.playerView.playVideo()
     }
     
     func playerView(playerView: YTPlayerView, didChangeToState state: YTPlayerState) {
         
         //Tell the view to dimiss itself when the user pauses the video or if the video stops
-        if state == YTPlayerState.Ended || state == YTPlayerState.Paused {
+        if state == YTPlayerState.Paused {
+            self.dismissViewControllerAnimated(true, completion: {})
+        } else if state == YTPlayerState.Ended {
             self.dismissViewControllerAnimated(true, completion: {})
         }
     }

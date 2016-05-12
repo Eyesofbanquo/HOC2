@@ -47,10 +47,9 @@ class HomeScreenTabBarController: UITabBarController {
 
         //Remove the tab bar line
        // self.tabBar.setValue(true, forUndefinedKey: "_hidesShadow")
-        self.tabBar.setValue(true, forKey: "_hidesShadow")
-        //self.tabBar.barTintColor = UIColor.clearColor()
-        self.tabBar.backgroundImage = UIImage()
-        self.tabBar.shadowImage = UIImage()
+        //self.tabBar.setValue(true, forKey: "_hidesShadow")
+        //self.tabBar.backgroundImage = UIImage()
+        //self.tabBar.shadowImage = UIImage()
         self.tabBar.translucent = true
         
 

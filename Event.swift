@@ -14,13 +14,12 @@ class Event {
     
     var _descriptionText:String!
     var _titleText:String!
-    //var _image:UIImage!
+    var _image:UIImageView!
     
     //var _affiliateImage:UIImage?
     
-    init(title:String /*image:UIImage*/, description descriptionText:String){
-        self._descriptionText = descriptionText
-        //self._image = image
+    init(title:String, image:UIImageView){
+        self._image = image
         self._titleText = title
     }
     
