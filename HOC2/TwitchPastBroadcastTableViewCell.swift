@@ -9,11 +9,15 @@
 import UIKit
 
 class TwitchPastBroadcastTableViewCell: UITableViewCell {
+    
+    @IBOutlet weak var _broadcastImagePreview:UIImageView!
+    @IBOutlet weak var _broadcastTitle:UILabel!
 
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
+    
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

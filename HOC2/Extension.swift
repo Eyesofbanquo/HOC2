@@ -7,3 +7,15 @@
 //
 
 import Foundation
+import UIKit
+
+extension UIImageView{
+    func makeBlurImage(){
+        let blurEffect = UIBlurEffect(style: .Light)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = self.bounds
+        
+        blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        self.addSubview(blurEffectView)
+    }
+}

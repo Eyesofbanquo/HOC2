@@ -7,3 +7,26 @@
 //
 
 import Foundation
+import UIKit
+
+class TwitchBroadcast {
+    
+    
+   /* Properties */
+    var _imagePreview:UIImageView!
+    //var _broadcastURL:NSURL!
+    var _broadcastTitle:String!
+    var _broadcastURL:String!
+    //var _broadcastDate:NSDate? --add this later
+    
+    init(imagePreview:UIImageView, broadcastTitle:String){
+        self._imagePreview = imagePreview
+        self._broadcastTitle = broadcastTitle
+    }
+    
+    convenience init(imagePreview:UIImageView, broadcastTitle:String, videoUrl:String){
+        self.init(imagePreview: imagePreview, broadcastTitle: broadcastTitle)
+        self._broadcastURL = videoUrl
+        
+    }
+}

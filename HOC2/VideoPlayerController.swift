@@ -8,10 +8,20 @@
 
 import UIKit
 
-class VideoPlayerController: UIViewController {
+class VideoPlayerController: UIViewController, YTPlayerViewDelegate {
+    
+    var videoId:String!
+    
+    @IBOutlet weak var playerView:YTPlayerView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        playerView.delegate = self
+        
+        playerView.loadWithVideoId(videoId)
+        //playerView.playVideo()
+        //playerView.
 
         // Do any additional setup after loading the view.
     }
@@ -21,6 +31,18 @@ class VideoPlayerController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func playerViewDidBecomeReady(playerView: YTPlayerView) {
+        NSNotificationCenter.defaultCenter().postNotificationName("Playback started", object: self)
+        self.playerView.playVideo()
+    }
+    
+    func playerView(playerView: YTPlayerView, didChangeToState state: YTPlayerState) {
+        
+        //Tell the view to dimiss itself when the user pauses the video or if the video stops
+        if state == YTPlayerState.Ended || state == YTPlayerState.Paused {
+            self.dismissViewControllerAnimated(true, completion: {})
+        }
+    }
 
     /*
     // MARK: - Navigation
