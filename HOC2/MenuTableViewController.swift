@@ -12,6 +12,8 @@ class MenuTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.translucent = true
+        self.navigationController?.view.backgroundColor = UIColor.clearColor()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false

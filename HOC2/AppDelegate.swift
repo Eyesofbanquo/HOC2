@@ -23,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        // FBSDKApplicationDelegate.sharedInstance()!.application(application, didFinishLaunchingWithOptions: launchOptions)
         
        UITabBar.appearance().tintColor = UIColor.purpleColor()
+       UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.LightContent, animated: true)
         
         return true
         

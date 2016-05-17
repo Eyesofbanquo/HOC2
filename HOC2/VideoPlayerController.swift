@@ -18,8 +18,14 @@ class VideoPlayerController: UIViewController, YTPlayerViewDelegate {
         super.viewDidLoad()
         
         playerView.delegate = self
+        playerView.loadWithVideoId(videoId, playerVars: [
+            "playsinline": 1,
+            "controls": 1,
+            "width": self.view.frame.width,
+            "height": self.view.frame.height]
+        )
         
-        playerView.loadWithVideoId(videoId)
+        //playerView.loadWithVideoId(videoId)
         //playerView.playVideo()
         //playerView.
 
@@ -33,7 +39,7 @@ class VideoPlayerController: UIViewController, YTPlayerViewDelegate {
     
     func playerViewDidBecomeReady(playerView: YTPlayerView) {
         NSNotificationCenter.defaultCenter().postNotificationName("Playback started", object: self)
-        //self.playerView.playVideo()
+        self.playerView.playVideo()
     }
     
     func playerView(playerView: YTPlayerView, didChangeToState state: YTPlayerState) {

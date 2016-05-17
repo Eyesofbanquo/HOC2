@@ -49,13 +49,20 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //This makes the navigation bar transparent
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: UIBarMetrics.Default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.translucent = true
+        self.navigationController?.view.backgroundColor = UIColor.clearColor()
+        
+        //This handles the sidebar navigation toggling system and also adds swiping
         if self.revealViewController() != nil {
             self._menuButton.target = self.revealViewController()
             self._menuButton.action = #selector(SWRevealViewController.revealToggle(_:))
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
         
-        self.navigationItem.title = "Stream"
+        self.navigationItem.title = ""
         self._pastBroadcastTableView.delegate = self
         self._pastBroadcastTableView.dataSource = self
         
@@ -97,7 +104,24 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
-        self._liveStreamVideo.reload()
+        //self._liveStreamVideo.reload()
+    }
+    
+    
+    override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+        
+        //Try to prevent the UIWebView from always reloading on orientation change
+        if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)){
+            self._liveStreamVideo.stopLoading()
+        } else if (self._liveStreamVideo.loading){
+            self._liveStreamVideo.reload()
+        }
+        
+        if(UIInterfaceOrientationIsLandscape(toInterfaceOrientation)){
+            self._liveStreamVideo.stopLoading()
+        } else if (self._liveStreamVideo.loading){
+            self._liveStreamVideo.reload()
+        }
     }
     
     override func viewDidAppear(animated: Bool) {

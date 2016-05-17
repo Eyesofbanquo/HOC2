@@ -21,7 +21,7 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
     
     
     //Youtube video player
-    var playerView:YTPlayerView!
+    @IBOutlet weak var playerView:YTPlayerView!
     
     var _events:[Event] = []
     var _events2:[Events] = []
@@ -42,11 +42,17 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        //This makes the navigation bar transparent
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: UIBarMetrics.Default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.translucent = true
+        self.navigationController?.view.backgroundColor = UIColor.clearColor()
+        
         self._youtubeVideosTable.delegate = self
         self._youtubeVideosTable.dataSource = self
         
-        //Connect this view to the SWRevealViewController
+        //Connect this view to the SWRevealViewController and enable swiping
         if self.revealViewController() != nil {
             self._menuButton.target = self.revealViewController()
             self._menuButton.action = #selector(SWRevealViewController.revealToggle(_:))
@@ -59,7 +65,7 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
         self.refreshControl?.addTarget(self, action: #selector(Featured.refresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
         self._youtubeVideosTable.addSubview(self.refreshControl!)
         
-        print(self._events.count)
+        //print(self._events.count)
         
         if (videosArray.count == 0) {
             self.loadYoutubeVideos()
@@ -78,63 +84,27 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
         self.loadYoutubeVideos()
     }
     
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
     }
     
     override func viewWillAppear(animated: Bool) {
-       /* let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
+       //Reload the table data once this view is about to appear
         
-        let managedContext = appDelegate.managedObjectContext
-        
-        //2
-        let fetchRequest = NSFetchRequest(entityName: "YTVideo")
-        
-        //3
-        do {
-            let results =
-                try managedContext.executeFetchRequest(fetchRequest)
-            print(results)
-            //print(results["videoId"] as? String)
-            //self._events = results as! [NSManagedObject]
-        } catch let error as NSError {
-            print("Could not fetch \(error), \(error.userInfo)")
-        }*/
     }
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        //self._youtubeVideosTable.hidden = true
-        
-        /*for i in 0..<self._events.count {
-            let appDelegate =
-                UIApplication.sharedApplication().delegate as! AppDelegate
-            let managedContext = appDelegate.managedObjectContext
-            let entity =  NSEntityDescription.entityForName("YTVideo",
-                                                            inManagedObjectContext:managedContext)
-            let video = NSManagedObject(entity: entity!,
-                                        insertIntoManagedObjectContext: managedContext)
-            self._events2[i].title! = self._events[i]._titleText!
-            self._events2[i].videoId! = self._events[i]._video_id!
-            
-            //video.setValue(self._events[i]._video_id, forKey: "videoId")
-            //video.setValue(self._events[i]._titleText, forKey: "title")
-            //video.setValue(
-            
-            do {
-                try managedContext.save()
-                print("saved")
-            } catch let _ as NSError{
-                print("Something went wrong here")
-            }
-        }*/
         
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        if self.videosArray.count > 0 {
+            self._youtubeVideosTable.reloadData()
+        }
         //self._youtubeVideosTable.hidden = false
         //self._youtubeVideosTable.reloadData()
     }
@@ -156,12 +126,7 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
         let title = cell.viewWithTag(1) as! UILabel
         let image = cell.viewWithTag(2) as! UIImageView
         
-        //let yt_image = UIImage(data: NSData(contentsOfURL: NSURL(string:(videosArray[indexPath.row]["thumbnail"] as? String)! )!)!)!
-        
-        
-        
         title.text = self._events[indexPath.row]._titleText
-        //image.image = self._events[indexPath.row]._video_image!.image
         if self._events[indexPath.row]._video_image != nil {
             image.image = self._events[indexPath.row]._video_image!.image
         }
@@ -173,7 +138,8 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let cell = tableView.dequeueReusableCellWithIdentifier("eventRow", forIndexPath: indexPath)
-        performSegueWithIdentifier("playVidSegue", sender: cell)
+        
+        //performSegueWithIdentifier("ytsegue", sender: cell)
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -295,11 +261,29 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
     
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let cell = sender as? UITableViewCell {
+        /*if let cell = sender as? UITableViewCell {
             let i = self._youtubeVideosTable.indexPathForRowAtPoint(cell.center)!.row
             if segue.identifier == "playVidSegue" {
                 let vidplaycontroller = segue.destinationViewController as! VideoPlayerController
                 vidplaycontroller.videoId = self.videosArray[i]["videoId"] as! String
+            }
+        }*/
+        
+        /*if let cell = sender as? UITableViewCell {
+            let i = self._youtubeVideosTable.indexPathForCell(cell)?.row
+            if segue.identifier == "playVidSegue" {
+                let vidplaycontroller = segue.destinationViewController as! VideoPlayerController
+                vidplaycontroller.videoId = self.videosArray[i!]["videoId"] as! String
+            }
+        }*/
+        
+        if segue.identifier == "ytsegue" {
+            let vidplaycontroller = segue.destinationViewController as! VideoPlayerController
+            if let cell = sender as? UITableViewCell {
+                let indexPath = self._youtubeVideosTable.indexPathForCell(cell)!
+                let selectedCell = self.videosArray[indexPath.row]
+                
+                vidplaycontroller.videoId = selectedCell["videoId"] as! String
             }
         }
     }
