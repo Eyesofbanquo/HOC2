@@ -17,7 +17,6 @@
 		608925541CCEED4600BB388C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608925531CCEED4600BB388C /* AppDelegate.swift */; };
 		6089255C1CCEED4600BB388C /* HOC2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6089255A1CCEED4600BB388C /* HOC2.xcdatamodeld */; };
 		6089255E1CCEED4600BB388C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6089255D1CCEED4600BB388C /* Assets.xcassets */; };
-		608925611CCEED4600BB388C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6089255F1CCEED4600BB388C /* LaunchScreen.storyboard */; };
 		6089256C1CCEED4600BB388C /* HOC2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6089256B1CCEED4600BB388C /* HOC2Tests.swift */; };
 		608925771CCEED4600BB388C /* HOC2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608925761CCEED4600BB388C /* HOC2UITests.swift */; };
 		608925881CD123CD00BB388C /* HomeScreenTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608925871CD123CD00BB388C /* HomeScreenTabBarController.swift */; };
@@ -150,7 +149,6 @@
 		608925531CCEED4600BB388C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6089255B1CCEED4600BB388C /* HOC2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HOC2.xcdatamodel; sourceTree = "<group>"; };
 		6089255D1CCEED4600BB388C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		608925601CCEED4600BB388C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		608925621CCEED4600BB388C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		608925671CCEED4600BB388C /* HOC2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HOC2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6089256B1CCEED4600BB388C /* HOC2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HOC2Tests.swift; sourceTree = "<group>"; };
@@ -268,7 +266,6 @@
 				608925841CD1237700BB388C /* Main Tab */,
 				608925531CCEED4600BB388C /* AppDelegate.swift */,
 				6089255D1CCEED4600BB388C /* Assets.xcassets */,
-				6089255F1CCEED4600BB388C /* LaunchScreen.storyboard */,
 				608925621CCEED4600BB388C /* Info.plist */,
 				6089255A1CCEED4600BB388C /* HOC2.xcdatamodeld */,
 				6081350D1CEAED24006C92FF /* Events+CoreDataProperties.swift */,
@@ -534,7 +531,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				608925611CCEED4600BB388C /* LaunchScreen.storyboard in Resources */,
 				6089255E1CCEED4600BB388C /* Assets.xcassets in Resources */,
 				60E141961CD88B770011C158 /* MyriadPro-BoldCond.otf in Resources */,
 				60010EB31CDA8CEE0025F153 /* bumsouls2.mp4 in Resources */,
@@ -677,14 +673,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		6089255F1CCEED4600BB388C /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				608925601CCEED4600BB388C /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
 		60930E741CE70F4D0075330A /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -784,6 +772,7 @@
 			baseConfigurationReference = 76E256680B3D7F250E7E7243 /* Pods-HOC2.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = launch;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
@@ -806,6 +795,7 @@
 			baseConfigurationReference = D13F7ACFE2715356635203AF /* Pods-HOC2.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = launch;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;

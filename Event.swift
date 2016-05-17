@@ -30,7 +30,22 @@ class Event{
     }
     
     private func loadVideo(){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),{
+        let image_url = NSURL(string: self._video_id)
+        let data = NSData(contentsOfURL: image_url!)
+        
+        if (data != nil){
+            /*dispatch_async(dispatch_get_main_queue(), {
+             let image = UIImageView()
+             image.image = UIImage(data: data!)
+             self._video_image = image
+             })*/
+            let image = UIImageView()
+            image.image = UIImage(data: data!)
+            self._video_image = image
+            self._parent._youtubeVideosTable.reloadData()
+            return
+        }
+        /*dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),{
             let image_url = NSURL(string: self._video_id)
             let data = NSData(contentsOfURL: image_url!)
             
@@ -48,7 +63,7 @@ class Event{
             }
             
             
-        })
+        })*/
     }
     
 }
