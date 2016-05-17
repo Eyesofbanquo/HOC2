@@ -19,14 +19,18 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var _streamImage:UIImageView!
     @IBOutlet weak var _pastBroadcastView:UIView!
     @IBOutlet weak var _informationView:UIView!
+    @IBOutlet weak var _menuButton:UIBarButtonItem!
     
     
     @IBAction func indexChanged(sender: UISegmentedControl){
         switch sender.selectedSegmentIndex {
         case 0:
+            self._liveStreamVideo.loadRequest(NSURLRequest(URL: NSURL(string: "http://player.twitch.tv/?channel=bum1six3&autoplay=false")!))
+        case 1:
             _pastBroadcastView.hidden = true
             _informationView.hidden = false
-        case 1:
+            
+        case 2:
             _pastBroadcastView.hidden = false
             _informationView.hidden = true
         default: break
@@ -44,14 +48,21 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if self.revealViewController() != nil {
+            self._menuButton.target = self.revealViewController()
+            self._menuButton.action = #selector(SWRevealViewController.revealToggle(_:))
+            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+        }
+        
+        self.navigationItem.title = "Stream"
         self._pastBroadcastTableView.delegate = self
         self._pastBroadcastTableView.dataSource = self
         
         self._liveStreamVideo.allowsInlineMediaPlayback = true
         self._liveStreamVideo.scrollView.scrollEnabled = false
         self._liveStreamVideo.scrollView.bounces = false
-        self._viewHeight = 0
-        self._viewWidth = 0
+        
         
         Alamofire.request(.GET, "https://protected-falls-32202.herokuapp.com/twitch", parameters: [:]).responseJSON{ response in
             do {
@@ -68,7 +79,7 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
                         
                         let data = NSData(contentsOfURL: image_url!)
                         dispatch_async(dispatch_get_main_queue(), {
-                            var image = UIImageView()
+                            let image = UIImageView()
                             image.image = UIImage(data: data!)
                             let newBroadcast = TwitchBroadcast(imagePreview: image, broadcastTitle: responseDict[i]["title"] as! String, videoUrl: broadcast_url)
                             self._pastBroadcasts += [newBroadcast]
@@ -85,11 +96,15 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
         
     }
     
+    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
+        self._liveStreamVideo.reload()
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         self._viewHeight = self._liveStreamVideo.frame.height
-        self._viewWidth = self._liveStreamVideo.frame.width
-        
+        self._viewWidth = self._liveStreamVideo.scrollView.frame.width
+        print(String(self._viewWidth))
         //USing the Twitch iFrame from their API guide
         /*let embedVideo = "<html><body><iframe src=\"https://player.twitch.tv/?\(DEFAULT_STREAM_STRING)&amp;html5\" height=\"\(self._viewHeight)\" width=\"\(self._viewWidth)\" scrolling=\"no\" allowfullscreen=\"false\"</iframe></body></html>"
         let test_link:String = String(format: embedVideo)*/
@@ -109,11 +124,14 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     
 
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        /*let embedVideo = "<html><body><iframe src=\"https://player.twitch.tv/?video=v\(self._pastBroadcasts[indexPath.row]._broadcastURL)\" height=\"\(self._viewHeight)\" width=\"\(self._viewWidth)\" scrolling=\"no\" allowfullscreen=\"false\"</iframe></body></html>"
-         let test_link:String = String(format: embedVideo)
-        self._liveStreamVideo.loadHTMLString(test_link, baseURL: nil)*/
-        self._liveStreamVideo.loadRequest(NSURLRequest(URL:NSURL(string: "https://player.twitch.tv/?video=v" + self._pastBroadcasts[indexPath.row]._broadcastURL + "&autoplay = false")!))
+        let embedVideo = "<!DOCTYPE html><head><style>body { margin: 0; padding: 0; }</style></head><body><iframe webkit-playsinline src=\"https://player.twitch.tv/?video=v\(self._pastBroadcasts[indexPath.row]._broadcastURL)&amp;autoplay=false&amp;playsinline=1\" height=\"\(self._viewHeight)\" width=\"\(self._viewWidth)\" scrolling=\"no\" allowfullscreen=\"false\" frameborder=\"0\" autoplay=\"false\"</iframe></body></html>"
+        //let test_link:String = String(format: embedVideo)
+        self._liveStreamVideo.loadHTMLString(embedVideo, baseURL: nil)
+        //let embedVideo2 = "<!DOCTYPE html><head><style>body{margin: 0; padding: 0;}</style></head><body>"
+        //self._liveStreamVideo.loadRequest(NSURLRequest(URL:NSURL(string: "https://player.twitch.tv/?video=v\(self._pastBroadcasts[indexPath.row]._broadcastURL)*&autoplay=false")!))
         //self._liveStreamVideo.loadRequest(NSURLRequest(URL: NSURL(string: self._pastBroadcasts[indexPath.row]._broadcastURL + "/embed")!))
+        //self._liveStreamVideo.loadRequest(NSURLRequest(URL: NSURL(string: "https://pacific-hollows-29177.herokuapp.com/iframe")!))
+        
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -123,8 +141,8 @@ class LiveStreamViewController: UIViewController, UITableViewDelegate, UITableVi
         2 = title
         3 = date **/
         
-        var image = cell.viewWithTag(1) as! UIImageView
-        var title = cell.viewWithTag(2) as! UILabel
+        let image = cell.viewWithTag(1) as! UIImageView
+        let title = cell.viewWithTag(2) as! UILabel
         let image_image = self._pastBroadcasts[indexPath.row]._imagePreview.image
         image.image = image_image
         title.text = self._pastBroadcasts[indexPath.row]._broadcastTitle

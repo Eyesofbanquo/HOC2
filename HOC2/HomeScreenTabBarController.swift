@@ -30,7 +30,7 @@ class HomeScreenTabBarController: UITabBarController {
             Use the HOC2 API to determine whether or not the stream is live
             Use a UIWebview to display the stream
             Show an offline image if the stream isn't currently live */
-        var tabBarIndex = self.tabBar.items?.startIndex
+        /*var tabBarIndex = self.tabBar.items?.startIndex
         self.tabBar.items![tabBarIndex!].title = ""
         self.tabBar.items![tabBarIndex!].image = UIImage(named: "twitch_logo")
         self.tabBar.items![tabBarIndex!].selectedImage = UIImage(named: "twitch_logo")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
@@ -50,7 +50,7 @@ class HomeScreenTabBarController: UITabBarController {
         //self.tabBar.setValue(true, forKey: "_hidesShadow")
         //self.tabBar.backgroundImage = UIImage()
         //self.tabBar.shadowImage = UIImage()
-        self.tabBar.translucent = true
+        self.tabBar.translucent = true*/
         
 
         // Do any additional setup after loading the view.

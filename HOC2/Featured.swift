@@ -9,14 +9,14 @@
 
 import UIKit
 import Alamofire
-import FBSDKShareKit
-import FBSDKCoreKit
-import FBSDKLoginKit
+import CoreData
+
 
 class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YTPlayerViewDelegate {
     
     /* Interface builder properties */
     @IBOutlet weak var _youtubeVideosTable:UITableView!
+    @IBOutlet weak var _menuButton:UIBarButtonItem!
     var refreshControl:UIRefreshControl?
     
     
@@ -24,7 +24,7 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
     var playerView:YTPlayerView!
     
     var _events:[Event] = []
-    
+    var _events2:[Events] = []
     
     /***
  
@@ -46,15 +46,26 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
         self._youtubeVideosTable.delegate = self
         self._youtubeVideosTable.dataSource = self
         
+        //Connect this view to the SWRevealViewController
+        if self.revealViewController() != nil {
+            self._menuButton.target = self.revealViewController()
+            self._menuButton.action = #selector(SWRevealViewController.revealToggle(_:))
+            self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+        }
         
-        
+        //Create a refresh view for pull down refresh
         self.refreshControl = UIRefreshControl()
         self.refreshControl?.attributedTitle = NSAttributedString(string: "Pull down to refresh")
         self.refreshControl?.addTarget(self, action: #selector(Featured.refresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
         self._youtubeVideosTable.addSubview(self.refreshControl!)
         
+        print(self._events.count)
         
-        self.loadYoutubeVideos()
+        if (videosArray.count == 0) {
+            self.loadYoutubeVideos()
+        } else {
+            self._youtubeVideosTable.reloadData()
+        }
 
 
         // Do any additional setup after loading the view.
@@ -62,6 +73,7 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
     
     func refresh(sender:AnyObject){
         self.videosArray = []
+        self._events = []
         self._youtubeVideosTable.reloadData()
         self.loadYoutubeVideos()
     }
@@ -71,16 +83,60 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
         
     }
     
+    override func viewWillAppear(animated: Bool) {
+       /* let appDelegate =
+            UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        //2
+        let fetchRequest = NSFetchRequest(entityName: "YTVideo")
+        
+        //3
+        do {
+            let results =
+                try managedContext.executeFetchRequest(fetchRequest)
+            print(results)
+            //print(results["videoId"] as? String)
+            //self._events = results as! [NSManagedObject]
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }*/
+    }
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        self._youtubeVideosTable.hidden = true
+        //self._youtubeVideosTable.hidden = true
+        
+        /*for i in 0..<self._events.count {
+            let appDelegate =
+                UIApplication.sharedApplication().delegate as! AppDelegate
+            let managedContext = appDelegate.managedObjectContext
+            let entity =  NSEntityDescription.entityForName("YTVideo",
+                                                            inManagedObjectContext:managedContext)
+            let video = NSManagedObject(entity: entity!,
+                                        insertIntoManagedObjectContext: managedContext)
+            self._events2[i].title! = self._events[i]._titleText!
+            self._events2[i].videoId! = self._events[i]._video_id!
+            
+            //video.setValue(self._events[i]._video_id, forKey: "videoId")
+            //video.setValue(self._events[i]._titleText, forKey: "title")
+            //video.setValue(
+            
+            do {
+                try managedContext.save()
+                print("saved")
+            } catch let _ as NSError{
+                print("Something went wrong here")
+            }
+        }*/
+        
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        self._youtubeVideosTable.hidden = false
-        self._youtubeVideosTable.reloadData()
+        //self._youtubeVideosTable.hidden = false
+        //self._youtubeVideosTable.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -88,23 +144,29 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
         // Dispose of any resources that can be recreated.
     }
     
+    
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("eventRow", forIndexPath: indexPath) 
         
         //viewWithTag(1) returns the title
         //viewWithTag(2) returns the description
         //viewWithTag(3) returns the image
-        
-        
-        
         /*Testing the calls */
         let title = cell.viewWithTag(1) as! UILabel
         let image = cell.viewWithTag(2) as! UIImageView
         
-        let yt_image = UIImage(data: NSData(contentsOfURL: NSURL(string:(videosArray[indexPath.row]["thumbnail"] as? String)! )!)!)!
-        image.image = yt_image
+        //let yt_image = UIImage(data: NSData(contentsOfURL: NSURL(string:(videosArray[indexPath.row]["thumbnail"] as? String)! )!)!)!
         
-        title.text = videosArray[indexPath.row]["title"] as? String
+        
+        
+        title.text = self._events[indexPath.row]._titleText
+        //image.image = self._events[indexPath.row]._video_image!.image
+        if self._events[indexPath.row]._video_image != nil {
+            image.image = self._events[indexPath.row]._video_image!.image
+        }
+        
+        
         
         return cell
     }
@@ -112,13 +174,12 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let cell = tableView.dequeueReusableCellWithIdentifier("eventRow", forIndexPath: indexPath)
         performSegueWithIdentifier("playVidSegue", sender: cell)
-        //self.playVid()
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return videosArray.count
-        //return channelsDataArray.count
+        //return videosArray.count
+        return self._events.count
         
     }
     
@@ -127,38 +188,6 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
     //the user's scrolling with the page control view
     //The scroller can only hold 3 videos
     func scrollerSetup(){
-        
-
-        
-        /*var imageOne = UIImageView(frame:CGRect(x: self._featuredScroller.frame.width * 0, y: 0, width: self._featuredScroller.frame.width, height: self._featuredScroller.frame.height))
-        
-        imageOne.image = UIImage(data: NSData(contentsOfURL: NSURL(string:(videosArray[0]["thumbnail"] as? String)! )!)!)!
-        
-        
-        
-        self._featuredScroller.addSubview(imageOne)
-        
-        var imageTwo = UIImageView()
-        
-        imageTwo.image = UIImage(data: NSData(contentsOfURL: NSURL(string:(videosArray[1]["thumbnail"] as? String)! )!)!)!
-        
-        imageTwo.frame = CGRect(x: self._featuredScroller.frame.width * 1, y: 0, width: self._featuredScroller.frame.width, height: self._featuredScroller.frame.height)
-        
-        self._featuredScroller.addSubview(imageTwo)
-        
-        var imageThree = UIImageView()
-        
-        imageThree.image = UIImage(data: NSData(contentsOfURL: NSURL(string:(videosArray[2]["thumbnail"] as? String)! )!)!)!
-        
-        imageThree.frame = CGRect(x: self._featuredScroller.frame.width * 2, y: 0, width: self._featuredScroller.frame.width, height: self._featuredScroller.frame.height)
-        
-        self._featuredScroller.addSubview(imageThree)
-
-        
-        let tap = UITapGestureRecognizer(target: self, action: #selector(Featured.playVid))
-        tap.cancelsTouchesInView = false
-        self._featuredScroller.addGestureRecognizer(tap)*/
-
     }
 
 
@@ -185,13 +214,9 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
                     desiredValuesDict["playlistId"] = ((firstItemDict["contentDetails"] as! Dictionary<NSObject, AnyObject>)["relatedPlaylists"] as! Dictionary<NSObject,AnyObject>)["uploads"]
                     
                     self.channelsDataArray.append(desiredValuesDict)
-                    
-                    //now reload the table after we got all the data we needed
+
                     self._youtubeVideosTable.reloadData()
-                    //print(self.channelsDataArray[0]["playlistID"]!)
-                    
-                    //self.getVideosFromChannel()
-                    //print(self.videosArray)
+
                     self.getVideosFromChannel()
 
                     
@@ -199,11 +224,8 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
                     
                 }
             }
-            
-            /* if let JSON = response.result.value{
-             print(JSON)
-             }*/
         }
+        
     }
     
     func getVideosFromChannel(){
@@ -224,15 +246,35 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
                         desiredPlaylistDict["thumbnail"] = ((playlistSnippetDict["thumbnails"] as! Dictionary<NSObject, AnyObject>)["maxres"] as! Dictionary<NSObject, AnyObject>)["url"]
                         desiredPlaylistDict["videoId"] = (playlistSnippetDict["resourceId"] as! Dictionary<NSObject, AnyObject>)["videoId"]
                         
-                        
-                        
                         self.videosArray.append(desiredPlaylistDict)
-                        self._youtubeVideosTable.reloadData()
+                        let event = Event(title: (desiredPlaylistDict["title"] as? String)!, video_id: desiredPlaylistDict["thumbnail"] as! String, parent: self)
+                        self._events += [event]
                         
-                        //print(self.videosArray)
-
+                        /*do {
+                            
+                            /*async programming
+                             This grabs the URL of each TwitchBroadcast object and displays the
+                             image after instantiating each object. This is where you want to edit
+                             the TwitchBroadcast object*/
+                            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0)){
+                                    let image_url = NSURL(string: desiredPlaylistDict["videoId"] as! String)
+                                
+                                    let data = NSData(contentsOfURL: image_url!)
+                                    dispatch_async(dispatch_get_main_queue(), {
+                                        let image = UIImageView()
+                                        image.image = UIImage(data: data!)
+                                        let event = Event(title: (desiredPlaylistDict["title"] as! String), image: UIImageView())
+                                        self._events += [event]
+                                    })
+                            }
+                    
+                        }*/
+                        
+                        
+                        //var event = Event(title: desiredPlaylistDict["title"], image: UIImageView(image:  UIImage(data: NSData(contentsOfURL: NSURL(string:(videosArray[i]["videoId"] as? String)! )!)!)!))
+                        
+                        //self._youtubeVideosTable.reloadData()
                     }
-                    //self.scrollerSetup()
 
                 } catch {
                 }
@@ -247,6 +289,7 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
             }
             
         }
+        
         self.refreshControl?.endRefreshing()
     }
     
@@ -259,10 +302,6 @@ class Featured: UIViewController, UITableViewDelegate, UITableViewDataSource, YT
                 vidplaycontroller.videoId = self.videosArray[i]["videoId"] as! String
             }
         }
-        /*if segue.identifier == "playVidSegue" {
-            let vidplaycontroller = segue.destinationViewController as! VideoPlayerController
-            //vidplaycontroller.videoId = videosArray[self._youtubeVideosTable.currentPage]["videoId"] as! String
-        }*/
     }
 
     /*
